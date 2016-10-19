@@ -9,7 +9,7 @@ def monkey_to_str_columns(self):
     frame = self.tr_frame
     highlight_func = 'max'
     highlight_func = ut.partial(np.argmax, axis=1)
-    highlight_cols = [0, 1]
+    highlight_cols = self.highlight_cols
 
     perrow_colxs = highlight_func(frame[highlight_cols].values)
     n_rows = len(perrow_colxs)
@@ -106,7 +106,7 @@ def monkey_to_str_columns(self):
     return strcols
 
 
-def to_string_monkey(df):
+def to_string_monkey(df, highlight_cols=[0, 1]):
     """  monkey patch to pandas to highlight the maximum value in specified
     cols of a row """
     kwds = dict(buf=None, columns=None, col_space=None, header=True,
@@ -115,6 +115,7 @@ def to_string_monkey(df):
                 justify=None, line_width=None, max_rows=None,
                 max_cols=None, show_dimensions=False)
     self = pd.formats.format.DataFrameFormatter(df, **kwds)
+    self.highlight_cols = highlight_cols
     ut.inject_func_as_method(self, monkey_to_str_columns, '_to_str_columns', override=True, force=True)
     def strip_ansi(text):
         import re

@@ -10,6 +10,7 @@ __version__ = '0.0.0'
 
 IMPORT_TUPLES = [
     ('util_graph', None),
+    ('util_pandas', None),
 ]
 __DYNAMIC__ = '--nodyn' not in sys.argv
 
