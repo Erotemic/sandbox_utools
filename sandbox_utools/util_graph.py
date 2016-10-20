@@ -65,11 +65,11 @@ def nx_transitive_reduction(G, mode=1):
         http://stackoverflow.com/questions/17078696/im-trying-to-perform-the-transitive-reduction-of-directed-graph-in-python
 
     CommandLine:
-        python -m sandbox_utools.util_graph nx_transitive_reduction --show
+        python -m utool.util_graph nx_transitive_reduction --show
 
     Example:
         >>> # DISABLE_DOCTEST
-        >>> from sandbox_utools.util_graph import *  # NOQA
+        >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
         >>> import networkx as nx
         >>> G = nx.DiGraph([('a', 'b'), ('a', 'c'), ('a', 'e'),
@@ -237,7 +237,7 @@ def nx_dag_node_rank(graph, nodes=None):
 
     Example:
         >>> # ENABLE_DOCTEST
-        >>> from sandbox_utools.util_graph import *  # NOQA
+        >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
         >>> adj_dict = {0: [5], 1: [5], 2: [1], 3: [4], 4: [0], 5: [], 6: [4], 7: [9], 8: [6], 9: [1]}
         >>> import networkx as nx
@@ -333,23 +333,22 @@ def nx_all_simple_edge_paths(G, source, target, cutoff=None, keys=False,
 
 def nx_delete_node_attr(graph, key, nodes=None):
     removed = 0
-    if nodes is None:
-        nodes = list(graph.nodes())
-    for node in nodes:
-        try:
-            del graph.node[node][key]
-            removed += 1
-        except KeyError:
-            pass
+    keys = [key] if not isinstance(key, list) else key
+    for key in keys:
+        if nodes is None:
+            nodes = list(graph.nodes())
+        for node in nodes:
+            try:
+                del graph.node[node][key]
+                removed += 1
+            except KeyError:
+                pass
     return removed
 
 
 def nx_delete_edge_attr(graph, key, edges=None):
     removed = 0
-    if not isinstance(key, list):
-        keys = [key]
-    else:
-        keys = key
+    keys = [key] if not isinstance(key, list) else key
     for key in keys:
         if graph.is_multigraph():
             if edges is None:
@@ -429,6 +428,16 @@ def nx_set_default_node_attributes(graph, key, val):
     else:
         values = {n: val for n in unset_nodes}
     nx.set_node_attributes(graph, key, values)
+
+
+def nx_set_default_edge_attributes(graph, key, val):
+    import networkx as nx
+    unset_edges = [(u, v) for u, v, d in graph.edges(data=True) if key not in d]
+    if isinstance(val, dict):
+        values = {e: val[e] for e in unset_edges if e in val}
+    else:
+        values = {e: val for e in unset_edges}
+    nx.set_edge_attributes(graph, key, values)
 
 
 def nx_get_default_node_attributes(graph, key, default=None):
@@ -552,11 +561,11 @@ def testdata_graph():
         tuple: (graph, G)
 
     CommandLine:
-        python -m sandbox_utools.util_graph --exec-testdata_graph --show
+        python -m utool.util_graph --exec-testdata_graph --show
 
     Example:
         >>> # DISABLE_DOCTEST
-        >>> from sandbox_utools.util_graph import *  # NOQA
+        >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
         >>> (graph, G) = testdata_graph()
         >>> import plottool as pt
@@ -657,12 +666,12 @@ def paths_to_root(tablename, root, child_to_parents):
     """
 
     CommandLine:
-        python -m sandbox_utools.util_graph --exec-paths_to_root:0
-        python -m sandbox_utools.util_graph --exec-paths_to_root:1
+        python -m utool.util_graph --exec-paths_to_root:0
+        python -m utool.util_graph --exec-paths_to_root:1
 
     Example:
         >>> # ENABLE_DOCTEST
-        >>> from sandbox_utools.util_graph import *  # NOQA
+        >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
         >>> child_to_parents = {
         >>>     'chip': ['dummy_annot'],
@@ -691,7 +700,7 @@ def paths_to_root(tablename, root, child_to_parents):
         }
 
     Example:
-        >>> from sandbox_utools.util_graph import *  # NOQA
+        >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
         >>> root = u'annotations'
         >>> tablename = u'Notch_Tips'
@@ -759,11 +768,11 @@ def traverse_path(start, end, seen_, allkeys, mat):
 def reverse_path(dict_, root, child_to_parents):
     """
     CommandLine:
-        python -m sandbox_utools.util_graph --exec-reverse_path --show
+        python -m utool.util_graph --exec-reverse_path --show
 
     Example:
         >>> # ENABLE_DOCTEST
-        >>> from sandbox_utools.util_graph import *  # NOQA
+        >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
         >>> child_to_parents = {
         >>>     'chip': ['dummy_annot'],
@@ -829,12 +838,12 @@ def get_levels(dict_, n=0, levels=None):
         levels (None): (default = None)
 
     CommandLine:
-        python -m sandbox_utools.util_graph --test-get_levels --show
-        python3 -m sandbox_utools.util_graph --test-get_levels --show
+        python -m utool.util_graph --test-get_levels --show
+        python3 -m utool.util_graph --test-get_levels --show
 
     Example:
         >>> # DISABLE_DOCTEST
-        >>> from sandbox_utools.util_graph import *  # NOQA
+        >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
         >>> from_root = {
         >>>     'dummy_annot': {
@@ -880,11 +889,11 @@ def longest_levels(levels_):
         levels_ (list):
 
     CommandLine:
-        python -m sandbox_utools.util_graph --exec-longest_levels --show
+        python -m utool.util_graph --exec-longest_levels --show
 
     Example:
         >>> # ENABLE_DOCTEST
-        >>> from sandbox_utools.util_graph import *  # NOQA
+        >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
         >>> levels_ = [
         >>>     ['dummy_annot'],
@@ -919,11 +928,11 @@ def shortest_levels(levels_):
         levels_ (list):
 
     CommandLine:
-        python -m sandbox_utools.util_graph --exec-shortest_levels --show
+        python -m utool.util_graph --exec-shortest_levels --show
 
     Example:
         >>> # ENABLE_DOCTEST
-        >>> from sandbox_utools.util_graph import *  # NOQA
+        >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
         >>> levels_ = [
         >>>     ['dummy_annot'],
@@ -962,15 +971,15 @@ def simplify_graph(graph):
         nx.Graph: new_graph
 
     CommandLine:
-        python3 -m sandbox_utools.util_graph simplify_graph --show
-        python2 -m sandbox_utools.util_graph simplify_graph --show
+        python3 -m utool.util_graph simplify_graph --show
+        python2 -m utool.util_graph simplify_graph --show
 
         python2 -c "import networkx as nx; print(nx.__version__)"
         python3 -c "import networkx as nx; print(nx.__version__)"
 
     Example:
         >>> # ENABLE_DOCTEST
-        >>> from sandbox_utools.util_graph import *  # NOQA
+        >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
         >>> import networkx as nx
         >>> graph = nx.DiGraph([('a', 'b'), ('a', 'c'), ('a', 'e'),
@@ -1204,7 +1213,7 @@ def all_multi_paths(graph, source, target, data=False):
 
     Example:
         >>> from dtool.depcache_control import *  # NOQA
-        >>> from sandbox_utools.util_graph import *  # NOQA
+        >>> from utool.util_graph import *  # NOQA
         >>> from dtool.example_depcache import testdata_depc
         >>> depc = testdata_depc()
         >>> graph = depc.graph
@@ -1336,10 +1345,14 @@ def bfs_conditional(G, source, reverse=False, keys=True, data=False,
     """
     from collections import deque
     from functools import partial
-    if reverse:
+    if reverse and hasattr(G, 'reverse'):
         G = G.reverse()
     #edges_iter = partial(G.edges_iter, keys=keys, data=data)
-    edges_iter = partial(G.edges, keys=keys, data=data)
+    import networkx as nx
+    if isinstance(G, nx.Graph):
+        edges_iter = partial(G.edges, data=data)
+    else:
+        edges_iter = partial(G.edges, keys=keys, data=data)
 
     #list(G.edges_iter('multitest', keys=True, data=True))
 
@@ -1394,7 +1407,7 @@ def bzip(*args):
     return bc
 
 
-def color_nodes(graph, labelattr='label'):
+def color_nodes(graph, labelattr='label', brightness=.878, sat_adjust=None):
     """ Colors edges and nodes by nid """
     import plottool as pt
     import utool as ut
@@ -1405,7 +1418,12 @@ def color_nodes(graph, labelattr='label'):
     if (ncolors) == 1:
         unique_colors = [pt.NEUTRAL_BLUE]
     else:
-        unique_colors = pt.distinct_colors(ncolors)
+        unique_colors = pt.distinct_colors(ncolors, brightness=brightness)
+    if sat_adjust:
+        unique_colors = [
+            pt.color_funcs.adjust_hsv_of_rgb(c, sat_adjust=sat_adjust)
+            for c in unique_colors
+        ]
     # Find edges and aids strictly between two nids
     lbl_to_color = dict(zip(unique_lbls, unique_colors))
     node_to_color = {node:  lbl_to_color[lbl] for node, lbl in node_to_lbl.items()}
@@ -1413,12 +1431,38 @@ def color_nodes(graph, labelattr='label'):
     ut.nx_ensure_agraph_color(graph)
 
 
-def graph_info(graph, verbose=False):
+def graph_info(graph, ignore=None, stats=False, verbose=False):
     import utool as ut
     node_attrs = list(graph.node.values())
     edge_attrs = list(ut.take_column(graph.edges(data=True), 2))
-    node_attr_hist = ut.dict_hist(ut.flatten([attr.keys() for attr in node_attrs]))
-    edge_attr_hist = ut.dict_hist(ut.flatten([attr.keys() for attr in edge_attrs]))
+
+    if stats:
+        import utool
+        with utool.embed_on_exception_context:
+            import pandas as pd
+            node_df = pd.DataFrame(node_attrs)
+            edge_df = pd.DataFrame(edge_attrs)
+            if ignore is not None:
+                ut.delete_dict_keys(node_df, ignore)
+                ut.delete_dict_keys(edge_df, ignore)
+            # Not really histograms anymore
+            try:
+                node_attr_hist = node_df.describe().to_dict()
+            except ValueError:
+                node_attr_hist
+            try:
+                edge_attr_hist = edge_df.describe().to_dict()
+            except ValueError:
+                edge_attr_hist = {}
+            key_order = ['count', 'mean', 'std', 'min', '25%', '50%', '75%', 'max']
+            node_attr_hist = ut.map_dict_vals(lambda x: ut.order_dict_by(x, key_order), node_attr_hist)
+            edge_attr_hist = ut.map_dict_vals(lambda x: ut.order_dict_by(x, key_order), edge_attr_hist)
+    else:
+        node_attr_hist = ut.dict_hist(ut.flatten([attr.keys() for attr in node_attrs]))
+        edge_attr_hist = ut.dict_hist(ut.flatten([attr.keys() for attr in edge_attrs]))
+        if ignore is not None:
+            ut.delete_dict_keys(edge_attr_hist, ignore)
+            ut.delete_dict_keys(node_attr_hist, ignore)
     node_type_hist = ut.dict_hist(list(map(type, graph.nodes())))
     info_dict = ut.odict([
         ('directed', graph.is_directed()),
@@ -1492,10 +1536,10 @@ def approx_min_num_components(nodes, negative_edges):
     solution.
 
     CommandLine:
-        python -m sandbox_utools.util_graph approx_min_num_components --show
+        python -m utool.util_graph approx_min_num_components --show
 
     Example:
-        >>> from sandbox_utools.util_graph import *  # NOQA
+        >>> from utool.util_graph import *  # NOQA
         >>> import utool as ut
         >>> import networkx as nx
         >>> nodes = [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -1567,9 +1611,22 @@ def approx_min_num_components(nodes, negative_edges):
     return num
 
 
+def nx_mincut_edges_weighted(G, s, t, capacity='weight'):
+    # http://stackoverflow.com/questions/33332462/minimum-s-t-edge-cut-which-takes-edge-weight-into-consideration
+    import networkx as nx
+    cut_weight, partitions = nx.minimum_cut(G, s, t, capacity=capacity)
+    edge_cut_list = []
+    for p1_node in partitions[0]:
+        for p2_node in partitions[1]:
+            if G.has_edge(p1_node, p2_node):
+                edge_cut_list.append((p1_node, p2_node))
+    return edge_cut_list
+
+
 if __name__ == '__main__':
     r"""
     CommandLine:
+        python -m sandbox_utools.util_graph
         python -m sandbox_utools.util_graph --allexamples
     """
     import multiprocessing
